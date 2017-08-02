@@ -24,6 +24,6 @@
 #define Refresh_h
 
 #import "UIScrollView+RefreshControl.h"
-#import <UIScrollView-InfiniteScroll/UIScrollView+InfiniteScroll.h>
+#import <UIScrollView_InfiniteScroll/UIScrollView+InfiniteScroll.h>
 
 #endif /* Refresh_h */
