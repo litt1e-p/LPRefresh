@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "LPRefresh"
-  s.version          = "0.0.1"
+  s.version          = "0.0.2"
   s.summary          = "a component to pull to refresh & scroll infinitely for load more"
   s.description      = <<-DESC
 			a component to pull to refresh & scroll infinitely for load more which is base on UIRreshControl & UIScrollView+InfiniteScroll                   
@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   #s.resource_bundles = {
   #  'LPRefreshBundle' => ['LPRefresh/**/*.lproj']
   #}
-  s.dependency 'UIScrollView-InfiniteScroll'
+  #s.dependency 'UIScrollView-InfiniteScroll'
   s.frameworks = 'Foundation', 'UIKit'
 end
 
