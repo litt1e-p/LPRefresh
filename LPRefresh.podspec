@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "LPRefresh"
-  s.version          = "0.0.2"
+  s.version          = "0.0.3"
   s.summary          = "a component to pull to refresh & scroll infinitely for load more"
   s.description      = <<-DESC
 			a component to pull to refresh & scroll infinitely for load more which is base on UIRreshControl & UIScrollView+InfiniteScroll                   
