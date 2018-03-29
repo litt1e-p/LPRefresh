@@ -23,6 +23,7 @@
 #import "UIScrollView+RefreshControl.h"
 #import <objc/runtime.h>
 
+
 typedef void (^RefreshHandler)(UIScrollView * _Nullable scrollView);
 
 @implementation UIScrollView (RefreshControl)
@@ -34,9 +35,13 @@ typedef void (^RefreshHandler)(UIScrollView * _Nullable scrollView);
  */
 - (void)addRefreshControlWithHandler:(void(^_Nullable)(UIScrollView * _Nullable scrollView))handler
 {
-    self.refreshHandler        = [handler copy];
-    self.refreshControl        = [[UIRefreshControl alloc] init];
-    [self.refreshControl addTarget:self action:@selector(refreshControlEvent:) forControlEvents:UIControlEventValueChanged];
+    self.refreshHandler = [handler copy];
+    if (@available(iOS 10.0, *)) {
+        self.refreshControl = self.refreshCtrl;
+    } else {
+        [self addSubview:self.refreshCtrl];
+    }
+    [self.refreshCtrl addTarget:self action:@selector(refreshControlEvent:) forControlEvents:UIControlEventValueChanged];
     self.refreshControlEnabled = YES;
 }
 
@@ -56,9 +61,11 @@ typedef void (^RefreshHandler)(UIScrollView * _Nullable scrollView);
     if (scrollView) {
         [scrollView setContentOffset:CGPointMake(0, scrollView.contentOffset.y - self.frame.size.height) animated:YES];
     }
-    [self.refreshControl layoutIfNeeded];
-    [self.refreshControl beginRefreshing];
-    [self.refreshControl sendActionsForControlEvents:UIControlEventValueChanged];
+    if (@available(iOS 10.0, *)) {
+        [self.refreshCtrl layoutIfNeeded];
+    }
+    [self.refreshCtrl beginRefreshing];
+    [self.refreshCtrl sendActionsForControlEvents:UIControlEventValueChanged];
 }
 
 /**
@@ -79,20 +86,24 @@ typedef void (^RefreshHandler)(UIScrollView * _Nullable scrollView);
  */
 - (void)finishRefresh
 {
-    [self.refreshControl endRefreshing];
+    [self.refreshCtrl endRefreshing];
 }
 
 - (void)setRefreshControlEnabled:(BOOL)enabled {
     if (enabled) {
-        if (self.refreshControl.superview) { return; }
-        [self addSubview:self.refreshControl];
+        if (self.refreshCtrl.superview) { return; }
+        if (@available(iOS 10.0, *)) {
+            self.refreshControl = self.refreshCtrl;
+        } else {
+            [self addSubview:self.refreshCtrl];
+        }
     } else {
-        [self.refreshControl removeFromSuperview];
+        [self.refreshCtrl removeFromSuperview];
     }
 }
 
 - (BOOL)refreshControlEnabled {
-    return self.refreshControl.superview != nil;
+    return self.refreshCtrl.superview != nil;
 }
 
 #pragma mark - Accessors
@@ -104,6 +115,22 @@ typedef void (^RefreshHandler)(UIScrollView * _Nullable scrollView);
 - (RefreshHandler)refreshHandler
 {
     return objc_getAssociatedObject(self, @selector(refreshHandler));
+}
+
+- (void)setRefreshCtrl:(UIRefreshControl *)refreshControl
+{
+    objc_setAssociatedObject(self, @selector(refreshCtrl), refreshControl, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (UIRefreshControl *)refreshCtrl
+{
+    UIRefreshControl *ctrl = objc_getAssociatedObject(self, @selector(refreshCtrl));
+    if (ctrl) {
+        return ctrl;
+    }
+    UIRefreshControl *ctrl0 = [[UIRefreshControl alloc] init];
+    self.refreshCtrl = ctrl0;
+    return ctrl0;
 }
 
 @end
